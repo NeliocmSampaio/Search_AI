@@ -33,16 +33,18 @@ def readMap(file, map):
     m = [ [] for i in range(mapHeight) ]
 
     for index, l in enumerate( lines[4:] ):
-        for i in l:
-            i.append()
+        for j, i in enumerate(l):
             if(i=='@'):
-                i = 1
+                m[index].append(1)
             else:
-                i = 0
+                m[index].append(0)
 
     for l in lines[4:]:
         for i in l:
-            if()
+            if i == 1:
+                print("@")
+            else:
+                print( " " )
 
     print("\nespec:")
     print(mapType)
