@@ -120,6 +120,61 @@ class Map:
                 visited[x+1][y-1] = 1
                 self.dfsMap(visited, (x+1, y-1))
 
+    def mapping(self, cel):
+
+        x = cel[0]  #Linha
+        y = cel[1]  #Coluna
+        #print(" ", (x*self.mapWidth) + y, " ", end="" )
+        #aux = input()
+
+        '''
+            Células de cima, de baixo, esquerda e direita
+        '''
+        # UP
+        #Célula não possui obstáculo e não foi visitada
+        if self.map[x-1][y]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+y, 1 )
+
+        # DOWN
+        #Célula não possui obstáculo e não foi visitada
+        if self.map[x+1][y]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+y, 1 )
+
+        # LEFT
+        #Célula não possui obstáculo e não foi visitada
+        if self.map[x][y-1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x)*self.mapWidth)+(y-1), 1 )
+
+        # RIGHT
+        #Célula não possui obstáculo e não foi visitada
+        if self.map[x][y+1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x)*self.mapWidth)+(y+1), 1 )
+
+        '''
+            Células das diagonais, cima-esquerda, cima-direita, baixo-direita 
+            e baixo esquerda
+        '''
+        # UP-LEFT
+        #Célula não possui obstáculo e não foi visitada
+        if self.map[x-1][y-1]==0 and self.map[x-1][y]==0 and self.map[x][y-1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+(y-1), 1.5 )
+
+        # UP-RIGHT
+        #Célula não possui obstáculo e não foi visitada
+        if self.map[x-1][y+1]==0 and self.map[x-1][y]==0 and self.map[x][y+1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+(y+1), 1.5 )
+
+        # DOWN-RIGHT
+        #Célula não possui obstáculo e não foi visitada
+        if self.map[x+1][y+1]==0 and self.map[x+1][y]==0 and self.map[x][y+1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+(y+1), 1.5 )
+
+        # DOWN-LEFT
+        #Célula não possui obstáculo e não foi visitada
+        if self.map[x+1][y-1]==0 and self.map[x+1][y]==0 and self.map[x][y-1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+(y-1), 1.5 )
+
+
     def readGraph(self):
         m = [ [ 0 for j in range(self.mapWidth) ] for i in range(self.mapHeight) ]
 
@@ -129,9 +184,11 @@ class Map:
                 if(self.map[i][j] == 0):
                     if(m[i][j]==0):
                         m[i][j] = 1
-                        self.dfsMap( m, (i, j) )
+                        self.mapping( (i, j) )
 
-        self.graph.print()
+        #self.graph.print()
+
+
 
 def readMap(file, map):
     f = open(file, 'r')
@@ -155,7 +212,7 @@ def readMap(file, map):
                     #m[index].append(0)
 
     map = Map( mapHeight, mapWidth, mapType, mapName, m )
-    map.printMap()
+    #map.printMap()
 
     map.readGraph()
 
