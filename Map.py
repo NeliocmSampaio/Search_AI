@@ -35,6 +35,9 @@ class Map:
                     print( " ", end="" )
             print()
     
+    def printGraph(self):
+        self.graph.print()
+    
     def printSpec(self):
         print("\nDados do Mapa:")
         print("Type: ", self.mapType)
@@ -126,16 +129,17 @@ def readMap(file):
             if i<mapHeight and j<mapWidth:
                 if(e=='@'):
                     m[i][j] = 1
-                    #m[index].append(1)
                 else:
                     m[i][j] = 0
-                    #m[index].append(0)
 
     map = Map( mapHeight, mapWidth, mapType, mapName, m )
     map.readGraph()
 
     return map
 
+'''
 map = readMap(sys.argv[1])
 map.printSpec()
 map.printMap()
+map.printGraph()
+'''
