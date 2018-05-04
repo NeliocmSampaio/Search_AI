@@ -17,6 +17,19 @@ class Graph:
                 print (i, " ", end="")
             print()
 
+    def vdfs(self, u, visitados):
+        visitados[u] = 1
+        print(u)
+
+        for i in self.adj[u]:
+            if visitados[i[0]]==0:
+                self.vdfs(i[0], visitados)
+
+    def dfs(self):
+        visitados = [ 0 for i in range(self.v) ]
+        for i, lista in enumerate(self.adj):
+            if visitados[i] == 0:
+                self.vdfs(i, visitados)
 class Map:
     def __init__(self, lines, columns, mapType, name, map):
         self.graph      = Graph( lines*columns )
@@ -112,6 +125,9 @@ class Map:
                         self.mapping( (i, j) )
 
         #self.graph.print()
+
+    def dfs(self):
+        self.graph.dfs()
 
 def readMap(file):
     f = open(file, 'r')
