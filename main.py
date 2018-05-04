@@ -7,8 +7,8 @@ class Graph:
         for i in range(v):
             self.adj.append([])
 
-    def add(self, a, b):
-        self.adj[a].append(b)
+    def add(self, a, b, p):
+        self.adj[a].append( (b, p) )
 
     def print(self):
         for index, l in enumerate(self.adj):
@@ -46,14 +46,16 @@ class Map:
 
         x = cel[0]  #Linha
         y = cel[1]  #Coluna
-        print(" ", (x*self.mapWidth) + y, " ", end="" )
-        aux = input()
+        #print(" ", (x*self.mapWidth) + y, " ", end="" )
+        #aux = input()
+
         '''
             Células de cima, de baixo, esquerda e direita
         '''
         # UP
         #Célula não possui obstáculo e não foi visitada
         if self.map[x-1][y]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+y, 1 )
             if  visited[x-1][y]==0:
                 visited[x-1][y] = 1
                 self.dfsMap(visited, (x-1, y))
@@ -61,6 +63,7 @@ class Map:
         # DOWN
         #Célula não possui obstáculo e não foi visitada
         if self.map[x+1][y]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+y, 1 )
             if visited[x+1][y]==0:
                 visited[x+1][y] = 1
                 self.dfsMap(visited, (x+1, y))
@@ -68,6 +71,7 @@ class Map:
         # LEFT
         #Célula não possui obstáculo e não foi visitada
         if self.map[x][y-1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x)*self.mapWidth)+(y-1), 1 )
             if visited[x][y-1]==0:
                 visited[x][y-1] = 1
                 self.dfsMap(visited, (x, y-1))
@@ -75,6 +79,7 @@ class Map:
         # RIGHT
         #Célula não possui obstáculo e não foi visitada
         if self.map[x][y+1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x)*self.mapWidth)+(y+1), 1 )
             if visited[x][y+1]==0:
                 visited[x][y+1] = 1
                 self.dfsMap(visited, (x, y+1))
@@ -85,28 +90,32 @@ class Map:
         '''
         # UP-LEFT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x-1][y-1]==0:
+        if self.map[x-1][y-1]==0 and self.map[x-1][y]==0 and self.map[x][y-1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+(y-1), 1.5 )
             if visited[x-1][y-1]==0:
                 visited[x-1][y-1] = 1
                 self.dfsMap(visited, (x-1, y-1))
 
         # UP-RIGHT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x-1][y+1]==0:
+        if self.map[x-1][y+1]==0 and self.map[x-1][y]==0 and self.map[x][y+1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+(y+1), 1.5 )
             if visited[x-1][y+1]==0:
                 visited[x-1][y+1] = 1
                 self.dfsMap(visited, (x-1, y+1))
 
         # DOWN-RIGHT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x+1][y+1]==0:
+        if self.map[x+1][y+1]==0 and self.map[x+1][y]==0 and self.map[x][y+1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+(y+1), 1.5 )
             if visited[x+1][y+1]==0:
                 visited[x+1][y+1] = 1
                 self.dfsMap(visited, (x+1, y+1))
 
         # DOWN-LEFT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x+1][y-1]==0:
+        if self.map[x+1][y-1]==0 and self.map[x+1][y]==0 and self.map[x][y-1]==0:
+            self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+(y-1), 1.5 )
             if visited[x+1][y-1]==0:
                 visited[x+1][y-1] = 1
                 self.dfsMap(visited, (x+1, y-1))
@@ -116,11 +125,13 @@ class Map:
 
         for i in range(self.mapHeight):
             for j in range(self.mapWidth):
-                print("i, j, map[i][j]: ", i, j, self.map[i][j] )
+                #print("i, j, map[i][j]: ", i, j, self.map[i][j] )
                 if(self.map[i][j] == 0):
                     if(m[i][j]==0):
                         m[i][j] = 1
                         self.dfsMap( m, (i, j) )
+
+        self.graph.print()
 
 def readMap(file, map):
     f = open(file, 'r')
@@ -129,7 +140,7 @@ def readMap(file, map):
     mapType     = ( str( lines[0] ).split(' ')[1] ).split('\n')[0]
     mapHeight   = int ( str( lines[1] ).split(' ')[1] )
     mapWidth    = int ( str( lines[2] ).split(' ')[1] )
-    mapName     = ( str( lines[3] ).split(' ')[1] ).split('\n')[0]
+    mapName     = ( str( lines[3] ) ).split('\n')[0]
 
     m = [ [ [] for j in range(mapWidth) ] for i in range(mapHeight) ]
 
@@ -151,3 +162,14 @@ def readMap(file, map):
     map.printSpec()
 
 readMap(sys.argv[1], map)
+
+G = Graph(5)
+
+'''
+G.add(1, 2, 2)
+G.add(2, 1, 3)
+G.add(2, 3, 2)
+G.add(3, 4, 1.5)
+
+G.print()
+'''
