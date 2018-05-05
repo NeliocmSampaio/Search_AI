@@ -17,19 +17,24 @@ class Graph:
                 print (i, " ", end="")
             print()
 
-    def vdfs(self, u, visitados):
+    def vdfs(self, u, destiny, visitados ):
         visitados[u] = 1
         print(u)
 
         for i in self.adj[u]:
             if visitados[i[0]]==0:
-                self.vdfs(i[0], visitados)
+                if i[0]==destiny:
+                    return
+                self.vdfs(i[0], destiny, visitados )
 
-    def dfs(self):
+    def dfs(self, start, destiny):
         visitados = [ 0 for i in range(self.v) ]
-        for i, lista in enumerate(self.adj):
-            if visitados[i] == 0:
-                self.vdfs(i, visitados)
+
+        self.vdfs( start, destiny, visitados )
+
+        #for i, lista in enumerate(self.adj):
+        #    if visitados[i] == 0:
+        #        self.vdfs(i, visitados)
 class Map:
     def __init__(self, lines, columns, mapType, name, map):
         self.graph      = Graph( lines*columns )
@@ -126,8 +131,8 @@ class Map:
 
         #self.graph.print()
 
-    def dfs(self):
-        self.graph.dfs()
+    def dfs(self, start, destiny ):
+        self.graph.dfs(start, destiny )
 
 def readMap(file):
     f = open(file, 'r')
