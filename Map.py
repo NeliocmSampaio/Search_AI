@@ -35,6 +35,9 @@ class Graph:
         #for i, lista in enumerate(self.adj):
         #    if visitados[i] == 0:
         #        self.vdfs(i, visitados)
+
+    #def dfsNoRec( self, start, destiny ):
+
 class Map:
     def __init__(self, lines, columns, mapType, name, map):
         self.graph      = Graph( lines*columns )
