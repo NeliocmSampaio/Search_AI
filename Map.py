@@ -17,26 +17,42 @@ class Graph:
                 print (i, " ", end="")
             print()
 
-    def vdfs(self, u, destiny, visitados ):
+    def vldfs(self, u, destiny, visitados, custo, l ):
         visitados[u] = 1
-        print(u)
+        print("u= ", u, ",destiny= ", destiny, ",custo= ", custo, ", level= ", l)
+        a = input()
+
+        if u==destiny:
+            return custo
+        if l==0:
+            visitados[u] = 0
+            return -1
 
         for i in self.adj[u]:
             if visitados[i[0]]==0:
-                if i[0]==destiny:
-                    return
-                self.vdfs(i[0], destiny, visitados )
+                r = self.vldfs(i[0], destiny, visitados, custo+i[1], l-1 )
 
-    def dfs(self, start, destiny):
+                if r!=-1:
+                    return r
+
+        visitados[u] = 0
+        return -1
+
+    def ldfs(self, start, destiny, l):
         visitados = [ 0 for i in range(self.v) ]
 
-        self.vdfs( start, destiny, visitados )
+        return self.vldfs( start, destiny, visitados, 0, l )
 
-        #for i, lista in enumerate(self.adj):
-        #    if visitados[i] == 0:
-        #        self.vdfs(i, visitados)
-
-    #def dfsNoRec( self, start, destiny ):
+    def IDS( self, start, destiny ):
+        i=0
+        r = -1
+        while True:
+            r = self.ldfs( start, destiny, i )
+            print("called l= ", i, ", r= ", r)
+            if r != -1:
+                print( r )
+                return True
+            i+=1
 
 class Map:
     def __init__(self, lines, columns, mapType, name, map):
@@ -134,8 +150,8 @@ class Map:
 
         #self.graph.print()
 
-    def dfs(self, start, destiny ):
-        self.graph.dfs(start, destiny )
+    def ids(self, start, destiny ):
+        self.graph.IDS(start, destiny )
 
 def readMap(file):
     f = open(file, 'r')
