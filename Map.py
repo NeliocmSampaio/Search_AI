@@ -1,4 +1,5 @@
 import sys
+from List import *
 
 class Graph:
     def __init__(self, v):
@@ -19,8 +20,6 @@ class Graph:
 
     def vldfs(self, u, destiny, visitados, custo, l ):
         visitados[u] = 1
-        print("u= ", u, ",destiny= ", destiny, ",custo= ", custo, ", level= ", l)
-        a = input()
 
         if u==destiny:
             return custo
@@ -50,7 +49,7 @@ class Graph:
             r = self.ldfs( start, destiny, i )
             print("called l= ", i, ", r= ", r)
             if r != -1:
-                print( r )
+                print( "custo= ", r )
                 return True
             i+=1
 
