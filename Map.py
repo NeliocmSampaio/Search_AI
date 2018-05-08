@@ -18,6 +18,27 @@ class Graph:
                 print (i, " ", end="")
             print()
 
+    def idfs( self, start, destiny ):
+        visitados = [ 0 for i in range(self.v) ]
+        openList = List()
+        closedList = List()
+
+        #Empilhando o vértice inicial e o custo até ele (0)
+        openList.pushB( [start, 0] )
+
+        while openList.elements > 0:
+            u = openList.popL()
+
+            if u[0] == destiny:
+                return u[1]
+
+            for i in self.adj[ u[0] ]:
+                if(visitados[i]==0):
+                    visitados[ i[0] ] = 1
+                    # u[1]: Custo empilhado até vértice u[0].
+                    # i[1]: Custo do vértice u[0] para i[0]
+                    openList.pushB( [i, u[1]+i[1] ] )
+
     def vldfs(self, u, destiny, visitados, custo, l ):
         visitados[u] = 1
 

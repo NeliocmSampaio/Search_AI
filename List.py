@@ -45,5 +45,23 @@ class List:
         self.list.append(e)
         self.elements += 1
 
-    def pushL(self, element ):
+    def enqueue(self, element ):
+        self.elements += 1
         self.list.append( element )
+
+    def pushB( self, element ):
+        self.elements += 1
+        self.list.insert( 0, element )
+
+'''
+l = List()
+l.pushB(2)
+l.pushB(3)
+l.pushB(8)
+l.pushB(7)
+print(l.list)
+print( l.popL() )
+print( l.popL() )
+print( l.popL() )
+print( l.popL() )
+'''
