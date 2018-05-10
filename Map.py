@@ -1,5 +1,7 @@
 import sys
+
 from List import *
+
 
 class Graph:
     def __init__(self, v):
@@ -71,6 +73,75 @@ class Graph:
             return -1, None, minLevel
         else:
             return cost, path, minLevel
+
+    # Busca de custo uniforme
+    def bcu( self, start, destiny ):
+        visitados   = [ 0 for i in range(self.v) ]
+        parent      = [ -1 for i in range(self.v) ]
+        level       = [ -1 for i in range(self.v) ]
+        Custo       = [ 80000000000 for i in range(self.v) ]
+        openList    = List()
+        path        = List()
+        #minLevel = limit
+
+        cost = -1
+
+        #lv = limit
+        #Empilhando o vértice inicial e o custo até ele (0)
+        visitados[start]    = 1
+        level[start]        = 0
+        Custo[start]        = 0
+        openList.insertPriority( [start, 0], 0 )
+
+        while openList.elements > 0:
+            
+            u = openList.popL()
+            vertice = u[0][0]
+            custo = u[1]
+
+            if u[0][0] == destiny:
+                path.list.clear()
+                i = u[0][0]
+
+                path.pushB( (i, custo) )
+                while i!=start:
+                    #print(i)
+                    path.pushB( (parent[i][0][0], custo) )
+                    i = parent[i][0][0]
+                #cost = u[1]
+                return u[1], path
+
+            visitados [ vertice ] = 2
+
+            for i in self.adj[ vertice ]: 
+                if visitados[i[0]]== 1 and Custo[i[0]]>custo+i[1]:
+                    #print("adding ", i[0], ",custo: ", custo+i[1], "(-1)")
+                    #print(openList.list)
+                    #x = input()
+                    Custo[i[0]] = custo+i[1]
+                    openList.insertPriority( [i[0], custo+i[1] ], custo+i[1] )
+                else:
+                    if visitados[i[0]]==0:
+                        #print("adding ", i[0], ",custo: ", custo+i[1], "(0)")
+                        #print(openList.list)
+                        #x = input()
+                        visitados[ i[0] ] = 1
+                        parent[i[0]] = (u[0], custo)
+                        Custo[i[0]] = custo+i[1]
+                        openList.insertPriority( [i[0], custo+i[1] ], custo+i[1] )
+
+                    #visitados[ i[0] ] = 1
+                    #parent [i[0]] = (u[0], custo)
+                    # u[1]: Custo empilhado até vértice u[0].
+                    # i[1]: Custo do vértice u[0] para i[0]
+                    # u[2]: level do nó u
+                    #level[i[0]] = lv-1
+                    #openList.insertPriority( [i[0], custo+i[1] ], custo+i[1] )
+        
+        if(cost==-1):
+            return -1, None
+        else:
+            return cost, path
 
     def vldfs(self, u, destiny, visitados, custo, l ):
         visitados[u] = 1
@@ -212,6 +283,10 @@ class Map:
             i+=1
         return custo, path
 
+    def bcu(self, start, destiny ):
+        custo, path = map.graph.bcu( src, dst )
+        return custo, path
+
     def printPath(self, path):
         celulas = []
 
@@ -257,7 +332,7 @@ map = readMap(sys.argv[1])
 src = int( sys.argv[2] )
 dst = int( sys.argv[3] )
 
-custo, path = map.ids(src, dst)
+custo, path = map.bcu(src, dst)
 print(custo)
 if custo != -1:
     print(path.list)
