@@ -22,53 +22,67 @@ class Graph:
     def idfs( self, start, destiny, limit ):
         visitados   = [ 0 for i in range(self.v) ]
         parent      = [ -1 for i in range(self.v) ]
+        level       = [ -1 for i in range(self.v) ]
         openList    = List()
         closedList  = List()
         path        = List()
 
-        print("lv:",limit)
+        cost = -1
+
+
+        #print("lv:",limit)
         lv = limit
         #Empilhando o vértice inicial e o custo até ele (0)
         visitados[start]    = 1
-        parent[start]       = (-1, 0)
+        #parent[start]       = (-1, 0)   #parent
+        level[start]        = 0
         openList.pushB( [start, 0, lv] )
 
         while openList.elements > 0:
-            print(openList.list)
-            x = input()
+            #print(openList.list)
+            #x = input()
             u = openList.popL()
-            if visitados[u[0]]==2:
-                continue
+            #if visitados[u[0]]==2:
+            #    continue
             visitados[u[0]]=2
             vertice = u[0]
             custo = u[1]
+            #pai = u[2]
             lv = u[2]
             #print( "u: ", u[0], ", cost: ", u[1], ", level: ", u[2])
 
-            if u[0] == destiny:
+            # 
+            if u[0] == destiny and (cost==-1 or cost >u[1]):
+                path.list.clear()
                 i = u[0]
                 path.pushB( (i, custo) )
                 while i!=start:
                     path.pushB( parent[i] )
                     i = parent[i][0]
-                return u[1], path
+                cost = u[1]
 
             if lv==0:
                 continue
 
             for i in self.adj[ vertice ]:
-                if(visitados[ i[0] ]!=2):
+                #if(visitados[ i[0] ]!=2):
+                #print("adj: ", i[0], "level: ", level[i[0]])
+                if level[i[0]]==-1 or level[i[0]]<lv:
                     visitados[ i[0] ] = 1
                     parent [i[0]] = (u[0], custo)
-                    print( "pushing ", i[0], ',cost: ', custo+i[1], "lv: ", lv-1,
-                    ", parent: ", u[0] )
-                    #x = input()
+                    #print( "pushing ", i[0], ',cost: ', custo+i[1], "lv: ", lv-1,
+                    #", parent: ", u[0] )
                     # u[1]: Custo empilhado até vértice u[0].
                     # i[1]: Custo do vértice u[0] para i[0]
                     # u[2]: level do nó u
+                    level[i[0]] = lv-1
                     openList.pushB( [i[0], custo+i[1], lv-1 ] )
-            visitados[u[0]]=2
-        return -1, None
+            # visitados[u[0]]=2
+        
+        if(cost==-1):
+            return -1, None
+        else:
+            return cost, path
 
     def vldfs(self, u, destiny, visitados, custo, l ):
         visitados[u] = 1
@@ -202,7 +216,29 @@ class Map:
         #self.graph.print()
 
     def ids(self, start, destiny ):
-        self.graph.IDS(start, destiny )
+        custo = -1
+        i=0
+        while custo==-1:
+            custo, path = map.graph.idfs( src, dst, i )
+            i+=1
+        return custo, path
+
+    def printPath(self, path):
+        celulas = []
+
+        for i in path.list:
+            celulas.append( i[0] )
+
+        for i in range(self.mapHeight):
+            for j in range(self.mapWidth):
+                if celulas.__contains__( (i*self.mapWidth)+j ):
+                    print("*", end="")
+                else: 
+                    if self.map[i][j] == 1:
+                        print("@", end="")
+                    else:
+                        print( " ", end="" )
+            print()
 
 def readMap(file):
     f = open(file, 'r')
@@ -232,10 +268,7 @@ map = readMap(sys.argv[1])
 src = int( sys.argv[2] )
 dst = int( sys.argv[3] )
 
-custo = -1
-i=0
-while custo==-1:
-    custo, path = map.graph.idfs( src, dst, i )
-    i+=1
+custo, path = map.ids(src, dst)
 print(custo)
 print(path.list)
+map.printPath(path)
