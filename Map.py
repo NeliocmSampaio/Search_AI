@@ -24,34 +24,27 @@ class Graph:
         parent      = [ -1 for i in range(self.v) ]
         level       = [ -1 for i in range(self.v) ]
         openList    = List()
-        closedList  = List()
+        #closedList  = List()
         path        = List()
+        minLevel = limit
 
         cost = -1
 
-
-        #print("lv:",limit)
         lv = limit
         #Empilhando o vértice inicial e o custo até ele (0)
         visitados[start]    = 1
-        #parent[start]       = (-1, 0)   #parent
         level[start]        = 0
         openList.pushB( [start, 0, lv] )
 
         while openList.elements > 0:
-            #print(openList.list)
-            #x = input()
             u = openList.popL()
-            #if visitados[u[0]]==2:
-            #    continue
-            visitados[u[0]]=2
             vertice = u[0]
             custo = u[1]
-            #pai = u[2]
             lv = u[2]
-            #print( "u: ", u[0], ", cost: ", u[1], ", level: ", u[2])
 
-            # 
+            if(minLevel>lv):
+                minLevel = lv
+
             if u[0] == destiny and (cost==-1 or cost >u[1]):
                 path.list.clear()
                 i = u[0]
@@ -65,24 +58,19 @@ class Graph:
                 continue
 
             for i in self.adj[ vertice ]:
-                #if(visitados[ i[0] ]!=2):
-                #print("adj: ", i[0], "level: ", level[i[0]])
                 if level[i[0]]==-1 or level[i[0]]<lv:
                     visitados[ i[0] ] = 1
                     parent [i[0]] = (u[0], custo)
-                    #print( "pushing ", i[0], ',cost: ', custo+i[1], "lv: ", lv-1,
-                    #", parent: ", u[0] )
                     # u[1]: Custo empilhado até vértice u[0].
                     # i[1]: Custo do vértice u[0] para i[0]
                     # u[2]: level do nó u
                     level[i[0]] = lv-1
                     openList.pushB( [i[0], custo+i[1], lv-1 ] )
-            # visitados[u[0]]=2
         
         if(cost==-1):
-            return -1, None
+            return -1, None, minLevel
         else:
-            return cost, path
+            return cost, path, minLevel
 
     def vldfs(self, u, destiny, visitados, custo, l ):
         visitados[u] = 1
@@ -213,13 +201,14 @@ class Map:
                         m[i][j] = 1
                         self.mapping( (i, j) )
 
-        #self.graph.print()
-
     def ids(self, start, destiny ):
         custo = -1
         i=0
+        minLevel = -1
         while custo==-1:
-            custo, path = map.graph.idfs( src, dst, i )
+            custo, path, minLevel = map.graph.idfs( src, dst, i )
+            if(custo==-1 and minLevel!=0):
+                break
             i+=1
         return custo, path
 
@@ -270,5 +259,6 @@ dst = int( sys.argv[3] )
 
 custo, path = map.ids(src, dst)
 print(custo)
-print(path.list)
-map.printPath(path)
+if custo != -1:
+    print(path.list)
+    map.printPath(path)
