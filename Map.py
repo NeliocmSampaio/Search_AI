@@ -158,7 +158,7 @@ class Graph:
             
             u = openList.popL()
             vertice = u[0][0]
-            custo = u[1]
+            custo = u[0][1]
 
             if u[0][0] == destiny:
                 path.list.clear()
@@ -168,7 +168,7 @@ class Graph:
                 while i!=start:
                     path.pushB( (parent[i][0][0], custo) )
                     i = parent[i][0][0]
-                return u[1], path, openList, closedList
+                return u[0][1], path, openList, closedList
 
             closedList.pushB( vertice )
             visitados [ vertice ] = 2
@@ -192,6 +192,76 @@ class Graph:
                         parent[i[0]] = (u[0], custo)
                         Custo[i[0]] = custo+i[1]
                         openList.insertPriority( [i[0], custo+i[1] ], h )
+
+                    # u[1]: Custo empilhado até vértice u[0].
+                    # i[1]: Custo do vértice u[0] para i[0]
+                    # u[2]: level do nó u
+        
+        if(cost==-1):
+            return -1, None, None, None
+        else:
+            return cost, path, openList, closedList
+
+# A-star
+    def aStar( self, start, destiny, heuristica ):
+        visitados   = [ 0 for i in range(self.v) ]
+        parent      = [ -1 for i in range(self.v) ]
+        level       = [ -1 for i in range(self.v) ]
+        Custo       = [ 80000000000 for i in range(self.v) ]
+        openList    = List()
+        closedList  = List()
+        path        = List()
+        cost = -1
+
+        print(start, destiny)
+
+        goalx = int (destiny/self.lines)
+        goaly = int ( destiny - goalx*self.lines )
+
+        #Empilhando o vértice inicial e o custo até ele (0)
+        visitados[start]    = 1
+        level[start]        = 0
+        Custo[start]        = 0
+        openList.insertPriority( [start, 0], 0 )
+
+        while openList.elements > 0:
+            
+            u = openList.popL()
+            vertice = u[0][0]
+            custo = u[0][1]
+
+            if u[0][0] == destiny:
+                path.list.clear()
+                i = u[0][0]
+
+                path.pushB( (i, custo) )
+                while i!=start:
+                    path.pushB( (parent[i][0][0], custo) )
+                    i = parent[i][0][0]
+                return u[0][1], path, openList, closedList
+
+            closedList.pushB( vertice )
+            visitados [ vertice ] = 2
+
+            for i in self.adj[ vertice ]: 
+
+                x = int ( i[0] /self.lines)
+                y = int ( i[0] - x*self.lines )
+
+                dx = abs( x - goalx )
+                dy = abs( y - goaly )
+
+                h = dx + dy
+
+                if visitados[i[0]]== 1 and Custo[i[0]]>custo+i[1]:
+                    Custo[i[0]] = custo+i[1]
+                    openList.insertPriority( [i[0], custo+i[1] ], custo+i[1]+h )
+                else:
+                    if visitados[i[0]]==0:
+                        visitados[ i[0] ] = 1
+                        parent[i[0]] = (u[0], custo)
+                        Custo[i[0]] = custo+i[1]
+                        openList.insertPriority( [i[0], custo+i[1] ], custo+i[1]+h )
 
                     # u[1]: Custo empilhado até vértice u[0].
                     # i[1]: Custo do vértice u[0] para i[0]
@@ -315,6 +385,10 @@ class Map:
         custo, path, openl, closedl = map.graph.bfs( src, dst )
         return custo, path, openl, closedl
 
+    def aStar(self, start, destiny, heuristica ):
+        custo, path, openl, closedl = map.graph.aStar( src, dst, heuristica )
+        return custo, path, openl, closedl
+
     def printPath(self, path):
         celulas = []
 
@@ -361,7 +435,7 @@ def printRoute(map, path, openL, closedL):
                 else:
                     if C.__contains__( (i*map.mapWidth)+j ):
                         #m[i][j] = [100, 100, 100, 100]
-                        array[i, j] = [255,20,147]
+                        array[i, j] = [135,206,250]
                     else:
                         if map.map[i][j] == 1:
                             #m[i][j] = [150, 150, 150, 150]
@@ -417,7 +491,7 @@ x = int( sys.argv[4] )
 y = int( sys.argv[5] )
 dst = x*map.mapWidth+y
 
-custo, path, o, c = map.bfs(src, dst)
+custo, path, o, c = map.aStar(src, dst, 1)
 print(custo)
 if custo != -1:
     printRoute(map, path, o, c)
