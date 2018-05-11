@@ -1,11 +1,15 @@
 import sys
 
 from List import *
+from PIL import Image
+import numpy as np
 
 
 class Graph:
-    def __init__(self, v):
+    def __init__(self, v, lines, collumns):
         self.v = v
+        self.lines = lines
+        self.collumns = collumns
         self.adj = [  ]
         for i in range(v):
             self.adj.append([])
@@ -81,12 +85,10 @@ class Graph:
         level       = [ -1 for i in range(self.v) ]
         Custo       = [ 80000000000 for i in range(self.v) ]
         openList    = List()
+        closedList  = List()
         path        = List()
-        #minLevel = limit
-
         cost = -1
 
-        #lv = limit
         #Empilhando o vértice inicial e o custo até ele (0)
         visitados[start]    = 1
         level[start]        = 0
@@ -105,84 +107,106 @@ class Graph:
 
                 path.pushB( (i, custo) )
                 while i!=start:
-                    #print(i)
                     path.pushB( (parent[i][0][0], custo) )
                     i = parent[i][0][0]
-                #cost = u[1]
-                return u[1], path
+                return u[1], path, openList, closedList
 
+            closedList.pushB( vertice )
             visitados [ vertice ] = 2
 
             for i in self.adj[ vertice ]: 
                 if visitados[i[0]]== 1 and Custo[i[0]]>custo+i[1]:
-                    #print("adding ", i[0], ",custo: ", custo+i[1], "(-1)")
-                    #print(openList.list)
-                    #x = input()
                     Custo[i[0]] = custo+i[1]
                     openList.insertPriority( [i[0], custo+i[1] ], custo+i[1] )
                 else:
                     if visitados[i[0]]==0:
-                        #print("adding ", i[0], ",custo: ", custo+i[1], "(0)")
-                        #print(openList.list)
-                        #x = input()
                         visitados[ i[0] ] = 1
                         parent[i[0]] = (u[0], custo)
                         Custo[i[0]] = custo+i[1]
                         openList.insertPriority( [i[0], custo+i[1] ], custo+i[1] )
 
-                    #visitados[ i[0] ] = 1
-                    #parent [i[0]] = (u[0], custo)
                     # u[1]: Custo empilhado até vértice u[0].
                     # i[1]: Custo do vértice u[0] para i[0]
                     # u[2]: level do nó u
-                    #level[i[0]] = lv-1
-                    #openList.insertPriority( [i[0], custo+i[1] ], custo+i[1] )
         
         if(cost==-1):
-            return -1, None
+            return -1, None, None, None
         else:
-            return cost, path
+            return cost, path, openList, closedList
 
-    def vldfs(self, u, destiny, visitados, custo, l ):
-        visitados[u] = 1
+    # Busca gulosa
+    def bfs( self, start, destiny ):
+        visitados   = [ 0 for i in range(self.v) ]
+        parent      = [ -1 for i in range(self.v) ]
+        level       = [ -1 for i in range(self.v) ]
+        Custo       = [ 80000000000 for i in range(self.v) ]
+        openList    = List()
+        closedList  = List()
+        path        = List()
+        cost = -1
 
-        if u==destiny:
-            return custo
-        if l==0:
-            visitados[u] = 0
-            return -1
+        goalx = int (destiny/self.lines)
+        goaly = int ( destiny - goalx*self.lines )
 
-        for i in self.adj[u]:
-            if visitados[i[0]]==0:
-                r = self.vldfs(i[0], destiny, visitados, custo+i[1], l-1 )
+        #Empilhando o vértice inicial e o custo até ele (0)
+        visitados[start]    = 1
+        level[start]        = 0
+        Custo[start]        = 0
+        openList.insertPriority( [start, 0], 0 )
 
-                if r!=-1:
-                    return r
+        while openList.elements > 0:
+            
+            u = openList.popL()
+            vertice = u[0][0]
+            custo = u[1]
 
-        visitados[u] = 0
-        return -1
+            if u[0][0] == destiny:
+                path.list.clear()
+                i = u[0][0]
 
-    def ldfs(self, start, destiny, l):
-        visitados = [ 0 for i in range(self.v) ]
+                path.pushB( (i, custo) )
+                while i!=start:
+                    path.pushB( (parent[i][0][0], custo) )
+                    i = parent[i][0][0]
+                return u[1], path, openList, closedList
 
-        return self.vldfs( start, destiny, visitados, 0, l )
+            closedList.pushB( vertice )
+            visitados [ vertice ] = 2
 
-    def IDS( self, start, destiny ):
-        i=0
-        r = -1
-        while True:
-            r = self.ldfs( start, destiny, i )
-            print("called l= ", i, ", r= ", r)
-            if r != -1:
-                print( "custo= ", r )
-                return True
-            i+=1
+            for i in self.adj[ vertice ]: 
+
+                x = int ( i[0] /self.lines)
+                y = int ( i[0] - x*self.lines )
+
+                dx = abs( x - goalx )
+                dy = abs( y - goaly )
+
+                h = dx + dy
+
+                if visitados[i[0]]== 1 and Custo[i[0]]>custo+i[1]:
+                    Custo[i[0]] = custo+i[1]
+                    openList.insertPriority( [i[0], custo+i[1] ], h )
+                else:
+                    if visitados[i[0]]==0:
+                        visitados[ i[0] ] = 1
+                        parent[i[0]] = (u[0], custo)
+                        Custo[i[0]] = custo+i[1]
+                        openList.insertPriority( [i[0], custo+i[1] ], h )
+
+                    # u[1]: Custo empilhado até vértice u[0].
+                    # i[1]: Custo do vértice u[0] para i[0]
+                    # u[2]: level do nó u
+        
+        if(cost==-1):
+            return -1, None, None, None
+        else:
+            return cost, path, openList, closedList
 
 class Map:
-    def __init__(self, lines, columns, mapType, name, map):
-        self.graph      = Graph( lines*columns )
+    def __init__(self, lines, collumns, mapType, name, map):
+        self.graph      = Graph( lines*collumns, lines, collumns )
         self.mapHeight  = lines
-        self.mapWidth   = columns
+        self.mapWidth   = collumns
         self.mapType    = mapType
         self.name       = name
         self.map        = map
@@ -284,8 +308,12 @@ class Map:
         return custo, path
 
     def bcu(self, start, destiny ):
-        custo, path = map.graph.bcu( src, dst )
-        return custo, path
+        custo, path, openl, closedl = map.graph.bcu( src, dst )
+        return custo, path, openl, closedl
+
+    def bfs(self, start, destiny ):
+        custo, path, openl, closedl = map.graph.bfs( src, dst )
+        return custo, path, openl, closedl
 
     def printPath(self, path):
         celulas = []
@@ -303,6 +331,59 @@ class Map:
                     else:
                         print( " ", end="" )
             print()
+
+def printRoute(map, path, openL, closedL):
+    m = [ [ 0 for j in range(map.mapWidth) ] for i in range(map.mapHeight) ]
+    array = np.zeros([map.mapHeight, map.mapWidth, 3], dtype=np.uint8)
+
+    O = []  #open transcription
+    C = []  #closed Transcription
+    P = []
+
+    for i in openL.list:
+        O.append( i[0][0] )
+
+    for i in closedL.list:
+        C.append( i )
+
+    for i in path.list:
+        P.append(i[0])
+
+    for i in range(map.mapHeight):
+        for j in range(map.mapWidth):
+            if P.__contains__((i*map.mapWidth)+j):
+                        array[i,j] = [0,0,0]
+            else:
+                if O.__contains__( (i*map.mapWidth)+j ):
+                        #print("*", end="")
+                    #m[i][j] = 50 #[50, 50, 50]
+                    array[i, j] = [123,104,238]
+                else:
+                    if C.__contains__( (i*map.mapWidth)+j ):
+                        #m[i][j] = [100, 100, 100, 100]
+                        array[i, j] = [255,20,147]
+                    else:
+                        if map.map[i][j] == 1:
+                            #m[i][j] = [150, 150, 150, 150]
+                            array[i, j] = [105,105,105]
+                        else:
+                            #m[i][j] = [200, 200, 200]
+                            array[i, j] = [220,220,220]
+    
+    #array = np.zeros([255, 255, 3], dtype=np.uint8)
+    #array[:,:] = [255, 128, 0]
+
+    #im = np.array( m )
+    #t = np.array ( [ [ [255, 255, 255, 255] for j in range(255) ] for i in range(255) ] )
+    img = Image.fromarray(array, 'RGB')
+    img.show()
+    img.save('imagem2.png')
+'''
+    for i in range(map.mapHeight):
+        for j in range(map.mapWidth):
+            print(m[i][j], " ", end='')
+        print()
+'''
 
 def readMap(file):
     f = open(file, 'r')
@@ -329,11 +410,16 @@ def readMap(file):
     return map
 
 map = readMap(sys.argv[1])
-src = int( sys.argv[2] )
-dst = int( sys.argv[3] )
+x = int( sys.argv[2] )
+y = int( sys.argv[3] )
+src = x*map.mapWidth+y
+x = int( sys.argv[4] )
+y = int( sys.argv[5] )
+dst = x*map.mapWidth+y
 
-custo, path = map.bcu(src, dst)
+custo, path, o, c = map.bfs(src, dst)
 print(custo)
 if custo != -1:
-    print(path.list)
-    map.printPath(path)
+    printRoute(map, path, o, c)
+    #print(path.list)
+    #map.printPath(path)
