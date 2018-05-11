@@ -213,8 +213,6 @@ class Graph:
         path        = List()
         cost = -1
 
-        print(start, destiny)
-
         goalx = int (destiny/self.lines)
         goaly = int ( destiny - goalx*self.lines )
 
@@ -317,22 +315,22 @@ class Map:
         '''
         # UP
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x-1][y]==0:
+        if x-1>=0 and self.map[x-1][y]==0:
             self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+y, 1 )
 
         # DOWN
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x+1][y]==0:
+        if x+1<self.mapWidth and self.map[x+1][y]==0:
             self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+y, 1 )
 
         # LEFT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x][y-1]==0:
+        if y-1>=0 and self.map[x][y-1]==0:
             self.graph.add( ( x*self.mapWidth)+y , ((x)*self.mapWidth)+(y-1), 1 )
 
         # RIGHT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x][y+1]==0:
+        if y+1 <self.mapHeight and self.map[x][y+1]==0:
             self.graph.add( ( x*self.mapWidth)+y , ((x)*self.mapWidth)+(y+1), 1 )
 
         '''
@@ -341,22 +339,22 @@ class Map:
         '''
         # UP-LEFT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x-1][y-1]==0 and self.map[x-1][y]==0 and self.map[x][y-1]==0:
+        if x-1>=0 and y-1>=0 and self.map[x-1][y-1]==0 and self.map[x-1][y]==0 and self.map[x][y-1]==0:
             self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+(y-1), 1.5 )
 
         # UP-RIGHT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x-1][y+1]==0 and self.map[x-1][y]==0 and self.map[x][y+1]==0:
+        if x-1>=0 and y+1< self.mapHeight and self.map[x-1][y+1]==0 and self.map[x-1][y]==0 and self.map[x][y+1]==0:
             self.graph.add( ( x*self.mapWidth)+y , ((x-1)*self.mapWidth)+(y+1), 1.5 )
 
         # DOWN-RIGHT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x+1][y+1]==0 and self.map[x+1][y]==0 and self.map[x][y+1]==0:
+        if x+1<self.mapWidth and y+1< self.mapHeight and self.map[x+1][y+1]==0 and self.map[x+1][y]==0 and self.map[x][y+1]==0:
             self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+(y+1), 1.5 )
 
         # DOWN-LEFT
         #Célula não possui obstáculo e não foi visitada
-        if self.map[x+1][y-1]==0 and self.map[x+1][y]==0 and self.map[x][y-1]==0:
+        if x+1<self.mapWidth and y-1>=0 and self.map[x+1][y-1]==0 and self.map[x+1][y]==0 and self.map[x][y-1]==0:
             self.graph.add( ( x*self.mapWidth)+y , ((x+1)*self.mapWidth)+(y-1), 1.5 )
 
 
@@ -436,7 +434,7 @@ def printRoute(map, path, openL, closedL):
                 if O.__contains__( (i*map.mapWidth)+j ):
                         #print("*", end="")
                     #m[i][j] = 50 #[50, 50, 50]
-                    array[i, j] = [123,104,238]
+                    array[i, j] = [220,20,60]
                 else:
                     if C.__contains__( (i*map.mapWidth)+j ):
                         #m[i][j] = [100, 100, 100, 100]
@@ -444,10 +442,10 @@ def printRoute(map, path, openL, closedL):
                     else:
                         if map.map[i][j] == 1:
                             #m[i][j] = [150, 150, 150, 150]
-                            array[i, j] = [105,105,105]
+                            array[i, j] = [135,135,135]
                         else:
                             #m[i][j] = [200, 200, 200]
-                            array[i, j] = [220,220,220]
+                            array[i, j] = [250,250,250]
     
     #array = np.zeros([255, 255, 3], dtype=np.uint8)
     #array[:,:] = [255, 128, 0]
