@@ -202,7 +202,7 @@ class Graph:
         else:
             return cost, path, openList, closedList
 
-# A-star
+# A-star ( heuristica==0: Manhathan; heuristica==1:Octile )
     def aStar( self, start, destiny, heuristica ):
         visitados   = [ 0 for i in range(self.v) ]
         parent      = [ -1 for i in range(self.v) ]
@@ -245,13 +245,18 @@ class Graph:
 
             for i in self.adj[ vertice ]: 
 
-                x = int ( i[0] /self.lines)
-                y = int ( i[0] - x*self.lines )
-
-                dx = abs( x - goalx )
-                dy = abs( y - goaly )
-
-                h = dx + dy
+                if(heuristica==0):
+                    x = int ( i[0] /self.lines)
+                    y = int ( i[0] - x*self.lines )
+                    dx = abs( x - goalx )
+                    dy = abs( y - goaly )
+                    h = dx + dy
+                else:
+                    x = int ( i[0] /self.lines)
+                    y = int ( i[0] - x*self.lines )
+                    dx = abs( x - goalx )
+                    dy = abs( y - goaly )
+                    h = max((dx, dy)) + 0.5 * min( dx, dy )
 
                 if visitados[i[0]]== 1 and Custo[i[0]]>custo+i[1]:
                     Custo[i[0]] = custo+i[1]
@@ -450,7 +455,7 @@ def printRoute(map, path, openL, closedL):
     #im = np.array( m )
     #t = np.array ( [ [ [255, 255, 255, 255] for j in range(255) ] for i in range(255) ] )
     img = Image.fromarray(array, 'RGB')
-    img.show()
+    #img.show()
     img.save('imagem2.png')
 '''
     for i in range(map.mapHeight):
