@@ -17,9 +17,12 @@ x = int( sys.argv[4] )
 y = int( sys.argv[5] )
 final = ( x*map.mapWidth+y )
 
-custo, path, o, c = map.aStar(inicial, final, 1)
+custo, path, o, c = map.bcu(inicial, final)
 #print(custo)
 if custo != -1:
 	#print( path.list )
 	imprimeCaminho( path.list, map.mapWidth, map.mapHeight)
 	#map.printPath( path )
+
+if len( sys.argv ) == 7 and custo!=-1 :
+	printRoute( map, path, o, c, sys.argv[6] )

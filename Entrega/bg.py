@@ -18,7 +18,7 @@ y = int( sys.argv[5] )
 final = ( x*map.mapWidth+y )
 
 custo, path, o, c = map.bfs(inicial, final)
-print(custo)
+#print(custo)
 if custo != -1:
 	#print( path.list )
 	imprimeCaminho( path.list, map.mapWidth, map.mapHeight)

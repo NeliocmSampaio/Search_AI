@@ -105,10 +105,11 @@ class Graph:
                 path.list.clear()
                 i = u[0][0]
 
-                path.pushB( (i, custo) )
+                path.pushB( (i, u[1]) )
                 while i!=start:
-                    path.pushB( (parent[i][0][0], custo) )
-                    i = parent[i][0][0]
+                    v = parent[i][0]
+                    path.pushB( (v[0], v[1]) )
+                    i = v[0]
                 return u[1], path, openList, closedList
 
             closedList.pushB( vertice )
@@ -164,10 +165,14 @@ class Graph:
                 path.list.clear()
                 i = u[0][0]
 
-                path.pushB( (i, custo) )
+                #print("u: ", u)
+                path.pushB( (i, u[0][1]) )
                 while i!=start:
-                    path.pushB( (parent[i][0][0], custo) )
-                    i = parent[i][0][0]
+                    v = parent[i][0]
+                    #print("v: ", v)
+                    path.pushB( (v[0], v[1]) )
+
+                    i = v[0]
                 return u[0][1], path, openList, closedList
 
             closedList.pushB( vertice )
@@ -232,10 +237,15 @@ class Graph:
                 path.list.clear()
                 i = u[0][0]
 
-                path.pushB( (i, custo) )
+                #print("u:: ", u[0][0], u[0][1], u[1] )
+
+                path.pushB( (i, u[1]) )
                 while i!=start:
-                    path.pushB( (parent[i][0][0], custo) )
-                    i = parent[i][0][0]
+                    v = parent[i][0]
+                    path.pushB( (v[0], v[1]) )
+                    #print("V: ", parent[i][0])
+                    i = v[0]
+                    #i = parent[i][0][0]
                 return u[0][1], path, openList, closedList
 
             closedList.pushB( vertice )
@@ -258,9 +268,11 @@ class Graph:
 
                 if visitados[i[0]]== 1 and Custo[i[0]]>custo+i[1]:
                     Custo[i[0]] = custo+i[1]
+                    #print("custo: ", custo+i[1])
                     openList.insertPriority( [i[0], custo+i[1] ], custo+i[1]+h )
                 else:
                     if visitados[i[0]]==0:
+                        #print("custo: ", custo+i[1])
                         visitados[ i[0] ] = 1
                         parent[i[0]] = (u[0], custo)
                         Custo[i[0]] = custo+i[1]
@@ -491,14 +503,16 @@ def imprimeCaminho( path, largura, altura ):
     flag=0
 
     c = path[ 0 ]
+
     x = int( c[0]/largura )
-    y = int( c[0] - x * altura )
-    print( "<", x,", ",y,", ",c[1],">" )
+    y = int( c[0] - x * largura )
+
+    print( "<"+str(x)+", "+str(y)+", "+str(c[1])+">" )
 
     c = path[ len(path)-1 ]
     x = int( c[0]/largura )
-    y = int( c[0] - x * altura )
-    print( "<", x,", ",y,", ",c[1],">" )
+    y = int( c[0] - x * largura )
+    print( "<"+str(x)+", "+str(y)+", "+str(c[1])+">" )
 
     for i in path:
         if flag==0:
@@ -506,11 +520,11 @@ def imprimeCaminho( path, largura, altura ):
         else:
             print(" ", end="")
         x = int( i[0]/largura )
-        y = int( i[0] - x * altura )
-        print( "<", x,", ",y,", ",i[1],">", end="" )
+        y = int( i[0] - x * largura )
+        print( "<"+str(x)+", "+str(y)+", "+str(i[1])+">", end="" )
     print()
 
-'''
+
 map = readMap(sys.argv[1])
 x = int( sys.argv[2] )
 y = int( sys.argv[3] )
@@ -520,9 +534,10 @@ y = int( sys.argv[5] )
 dst = x*map.mapWidth+y
 
 custo, path, o, c = map.aStar(src, dst, 1)
-print(custo)
+'''
+#print(custo)
 if custo != -1:
-    printRoute(map, path, o, c)
-    #print(path.list)
+    #printRoute(map, path, o, c)
+    print(path.list)
     #map.printPath(path)
 '''
