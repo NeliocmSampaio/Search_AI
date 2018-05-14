@@ -369,22 +369,22 @@ class Map:
                         m[i][j] = 1
                         self.mapping( (i, j) )
 
-    def ids(self, start, destiny ):
+    def ids(self, src, dst ):
         custo = -1
         i=0
         minLevel = -1
         while custo==-1:
-            custo, path, minLevel = self.graph.idfs( start, destiny, i )
+            custo, path, minLevel = self.graph.idfs( src, dst, i )
             if(custo==-1 and minLevel!=0):
                 break
             i+=1
         return custo, path
 
-    def bcu(self, start, destiny ):
-        custo, path, openl, closedl = map.graph.bcu( src, dst )
+    def bcu(self, src, dst ):
+        custo, path, openl, closedl = self.graph.bcu( src, dst )
         return custo, path, openl, closedl
 
-    def bfs(self, start, destiny ):
+    def bfs(self, src, dst ):
         custo, path, openl, closedl = self.graph.bfs( src, dst )
         return custo, path, openl, closedl
 
@@ -409,7 +409,7 @@ class Map:
                         print( " ", end="" )
             print()
 
-def printRoute(map, path, openL, closedL):
+def printRoute(map, path, openL, closedL, filename):
     m = [ [ 0 for j in range(map.mapWidth) ] for i in range(map.mapHeight) ]
     array = np.zeros([map.mapHeight, map.mapWidth, 3], dtype=np.uint8)
 
@@ -454,7 +454,7 @@ def printRoute(map, path, openL, closedL):
     #t = np.array ( [ [ [255, 255, 255, 255] for j in range(255) ] for i in range(255) ] )
     img = Image.fromarray(array, 'RGB')
     #img.show()
-    img.save('imagem2.png')
+    img.save("imagem.png")
 '''
     for i in range(map.mapHeight):
         for j in range(map.mapWidth):
